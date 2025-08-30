@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"6.5840/kvsrv1/rpc"
-	"6.5840/kvtest1"
-	"6.5840/tester1"
+	kvtest "6.5840/kvtest1"
+	tester "6.5840/tester1"
 )
 
 type Clerk struct {
@@ -41,7 +41,7 @@ func (ck *Clerk) Get(key string) (string, rpc.Tversion, rpc.Err) {
 				return reply.Value, reply.Version, reply.Err
 			}
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(100 * time.Millisecond)
 	}
 
 }
@@ -58,6 +58,9 @@ func (ck *Clerk) Get(key string) (string, rpc.Tversion, rpc.Err) {
 // the Put was performed or not.
 //
 // When the key does not exist, it should return an ErrNoKey error.
+// ErrMaybe是可能成功put，可能失败put，要进行区分，就在server中增加一个
+// history的map，记录下对应键值的版本号下操作成功的客户端id，然后与本客户端id进行对比
+// 就知道是否执行成功
 //
 // You can send an RPC with code like this:
 // ok := ck.clnt.Call(ck.server, "KVServer.Put", &args, &reply)
@@ -84,6 +87,6 @@ func (ck *Clerk) Put(key, value string, version rpc.Tversion) rpc.Err {
 		} else {
 			num++
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
